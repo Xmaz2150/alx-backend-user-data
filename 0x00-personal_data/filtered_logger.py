@@ -68,11 +68,9 @@ def get_db() -> MySQLConnection:
 
     conn = MySQLConnection(
             host=host if host else 'localhost',
-            port=3306,
             user=user if user else 'root',
             passwd=password,
             db=db_name,
-            charset="utf8"
     )
     return conn
 
