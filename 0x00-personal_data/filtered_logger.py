@@ -55,7 +55,7 @@ def get_logger() -> logging.Logger:
     custom_logger.addHandler(cns_handler)
     custom_logger.propagate = False
 
-    return custom_logger()
+    return custom_logger
 
 def get_db() -> MySQLConnection:
     """
@@ -76,3 +76,29 @@ def get_db() -> MySQLConnection:
     )
     return conn
 
+def main():
+    """
+    print protected user data from DB
+    """
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+
+    cols = [desc[0] for desc in cursor.description]
+    f_info = []
+    for row in cursor:
+        kv_pairs = [f"{key}={val}" for key, val in zip(cols, row)]
+        f_info.append(";".join(kv_pairs))
+
+    logger = get_logger()
+
+    for user_i in f_info:
+        logger.info(user_i);
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
