@@ -4,7 +4,10 @@ logging module
 """
 import re
 import logging
+import MySQLdb
+import os
 from typing import List
+from MySQLdb.connections import Connection
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
@@ -54,4 +57,23 @@ def get_logger() -> logging.Logger:
     custom_logger.propagate = False
 
     return custom_logger()
+
+def get_db() -> Connection:
+    """
+    creates DB connector
+    """
+    user = os.getenv('PERSONAL_DATA_DB_USERNAME')
+    password = os.getenv('PERSONAL_DATA_DB_PASSWORD')
+    host = os.getenv('PERSONAL_DATA_DB_HOST')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
+
+    conn = MySQLdb.connect(
+            host=host if host else 'localhost',
+            port=3306,
+            user=user if user else 'root',
+            passwd=password,
+            db=db_name,
+            charset="utf8"
+    )
+    return conn
 
