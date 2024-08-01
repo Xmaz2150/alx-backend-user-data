@@ -2,7 +2,6 @@
 """
 logging module
 """
-
 import re
 import logging
 from typing import List
@@ -38,4 +37,21 @@ class RedactingFormatter(logging.Formatter):
         record.msg = filter_datum(self.fields, self.REDACTION, record.msg, self.SEPARATOR)
         return super(RedactingFormatter, self).format(record)
 
+
+def get_logger() -> logging.Logger:
+    """
+    creates a secure logger
+    """
+    custom_logger = logging.getLogger('test')
+    custom_logger.setLevel('INFO')
+    formatter = RedactingFormatter(PII_FIELDS)
+
+    cns_handler = logging.StreamHandler()
+    cns_handler.setLevel('INFO')
+    cns_handler.setFormatter(formatter)
+
+    custom_logger.addHandler(cns_handler)
+    custom_logger.propagate = False
+
+    return custom_logger()
 
