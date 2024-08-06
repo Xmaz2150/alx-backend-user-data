@@ -45,8 +45,13 @@ class BasicAuth(Auth):
             return none_return
 
         credentials = decoded_base64_authorization_header.split(':')
-        if len(credentials) != 2:
+        if len(credentials) < 2:
             return none_return
+        elif len(credentials) > 2:
+            first_credential = credentials[0]
+            second_credential = ':'.join(credentials[1:])
+
+            return tuple([first_credential, second_credential])
 
         return tuple(credentials)
 
