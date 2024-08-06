@@ -3,6 +3,8 @@
 Basic Authentication mdule
 """
 from api.v1.auth.auth import Auth
+from models.user import User
+from typing import TypeVar
 from base64 import b64decode
 import binascii
 
@@ -48,4 +50,20 @@ class BasicAuth(Auth):
         
         return tuple(credentials)
 
+    def user_object_from_credentials(self, user_email: str, user_pwd: str) -> TypeVar('User'):
+        """
+        Gets user by their credentials
+        """
+        if user_email and user_pwd and isinstance(user_email, str) and isinstance(user_pwd, str):
+            users = User().search({'email': user_email})
 
+            if users:
+                for user in users:
+                    if user.is_valid_password(user_pwd):
+                        return user
+                    else:
+                        return None
+            else:
+                return None
+        else:
+            return None
