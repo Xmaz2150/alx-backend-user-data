@@ -22,9 +22,11 @@ if auth == 'basic_auth':
 else:
     auth = Auth()
 
+
 @app.before_request
 def f():
     """
+    function to run before each request
     """
     if auth:
         paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
@@ -35,11 +37,13 @@ def f():
             if not auth.current_user(request):
                 abort(403)
 
+
 @app.errorhandler(404)
 def not_found(error) -> str:
     """ Not found handler
     """
     return jsonify({"error": "Not found"}), 404
+
 
 @app.errorhandler(401)
 def not_authorized(error) -> str:
@@ -47,6 +51,7 @@ def not_authorized(error) -> str:
     Not authorized handler
     """
     return jsonify({"error": "Unauthorized"}), 401
+
 
 @app.errorhandler(403)
 def forbidden(error) -> str:

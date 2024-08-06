@@ -36,5 +36,6 @@ class Auth:
 
     def current_user(self, request=None) -> TypeVar('User'):
         """
+        My basic Basic Authentication (updated by next child)
         """
         return None
