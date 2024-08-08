@@ -4,6 +4,7 @@ Authentication mdule
 """
 from flask import request
 from typing import List, TypeVar
+import os
 
 
 class Auth:
@@ -39,3 +40,11 @@ class Auth:
         My basic Basic Authentication (updated by next child)
         """
         return None
+
+    def session_cookie(self, request=None):
+        """
+        Returns sessions cookie value
+        """
+        cookie_key = os.getenv('SESSION_NAME', None)
+
+        return request.cookies.get(cookie_key)
