@@ -45,6 +45,9 @@ class Auth:
         """
         Returns sessions cookie value
         """
-        cookie_key = os.getenv('SESSION_NAME', None)
 
-        return request.cookies.get(cookie_key)
+        if request:
+            cookie_key = os.getenv('SESSION_NAME', None)
+
+            return request.cookies.get(cookie_key)
+        return None
