@@ -40,9 +40,10 @@ def f():
         ]
 
         if auth.require_auth(request.path, paths):
-            if not auth.authorization_header(request) or \
-                    not auth.session_cookie(request):
-                abort(401)
+            if not auth.authorization_header(request):
+                if not auth.session_cookie(request):
+                    abort(401)
+
             res = auth.current_user(request)
             if not res:
                 abort(403)
