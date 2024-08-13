@@ -39,9 +39,8 @@ class DB:
         """
         user = User(email=email, hashed_password=hashed_password)
 
-        Session = self._session
-        Session.add(user)
-        Session.commit()
+        self._session.add(user)
+        self._session.commit()
         return user
 
     def find_user_by(self, **search) -> TypeVar('User'):
@@ -53,8 +52,7 @@ class DB:
         if 'users.{}'.format(*search) not in cols:
             raise InvalidRequestError
 
-        Session = self._session
-        user = Session.query(User).filter_by(**search).one()
+        user = self._session.query(User).filter_by(**search).one()
         if not user:
             raise NoResultFound
         return user
@@ -69,6 +67,5 @@ class DB:
             if 'users.{}'.format(k) not in cols:
                 raise ValueError
 
-        Session = self._session
-        Session.query(User).filter_by(id=user_id).update(search)
-        Session.commit()
+        self._session.query(User).filter_by(id=user_id).update(search)
+        self._session.commit()
