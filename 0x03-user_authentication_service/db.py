@@ -63,10 +63,15 @@ class DB:
         Updates user
         """
 
-        cols = [str(c) for c in User.__table__.columns]
-        for k in search.keys():
-            if 'users.{}'.format(k) not in cols:
-                raise ValueError
+        try:
+            user = self.find_user_by(id=user_id)
 
-        self._session.query(User).filter_by(id=user_id).update(search)
-        self._session.commit()
+            for k, v in search.items():
+                if hasattr(user, k):
+                    setattr(user, k, v)
+                else:
+                    raise ValueError
+            self._session.commit()
+        except NoResultFound:
+            pass
+        return None
