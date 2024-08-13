@@ -28,4 +28,8 @@ class Auth:
         Registers user to DataBase
         """
         DB = self._db
-        DB.add_user(email, _hash_password(password))
+        try:
+            DB.find_user_by(email=email)
+            raise ValueError('User {} already exists'.format(email))
+        except NoResultFound:
+            return DB.add_user(email, _hash_password(password))
