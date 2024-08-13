@@ -40,9 +40,13 @@ class DB:
         user = User(email=email, hashed_password=hashed_password)
 
         Session = self._session
-        Session.add(user)
-        Session.commit()
-        return user
+        try:
+            q = Session.query(User).filter(User.email == email).one()
+            raise ValueError('User {} already exists'.format(email))
+        except NoResultFound:
+            Session.add(user)
+            Session.commit()
+            return user
 
     def find_user_by(self, **search) -> TypeVar('User'):
         """
