@@ -49,10 +49,11 @@ class DB:
         """
         cols = [str(c) for c in User.__table__.columns]
 
-        if 'users.{}'.format(*search) not in cols:
-            raise InvalidRequestError
+        for k in search.keys():
+            if 'users.{}'.format(k) not in cols:
+                raise InvalidRequestError
 
-        user = self._session.query(User).filter_by(**search).one()
+        user = self._session.query(User).filter_by(**search).first()
         if not user:
             raise NoResultFound
         return user
