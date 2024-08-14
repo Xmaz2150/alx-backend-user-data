@@ -39,36 +39,37 @@ class DB:
         """
         user = User(email=email, hashed_password=hashed_password)
 
-        Session = self._session
-        Session.add(user)
-        Session.commit()
+        self._session.add(user)
+        self._session.commit()
         return user
 
     def find_user_by(self, **search) -> TypeVar('User'):
         """
         Queries user
         """
-        cols = [str(c) for c in User.__table__.columns]
+        cols = User.__table__.columns.keys()
 
-        if 'users.{}'.format(*search) not in cols:
-            raise InvalidRequestError
+        for k in search.keys():
+            if k not in cols:
+                raise InvalidRequestError
 
-        Session = self._session
-        user = Session.query(User).filter_by(**search).one()
-        if not user:
+        try:
+            return self._session.query(User).filter_by(**search).one()
+        except NoResultFound:
             raise NoResultFound
-        return user
 
     def update_user(self, user_id: int, **search) -> None:
         """
         Updates user
         """
 
-        cols = [str(c) for c in User.__table__.columns]
+        cols = User.__table__.columns.keys()
+
         for k in search.keys():
-            if 'users.{}'.format(k) not in cols:
+            if k not in cols:
                 raise ValueError
 
-        Session = self._session
-        Session.query(User).filter_by(id=user_id).update(search)
-        Session.commit()
+        user = self.find_user_by(id=user_id)
+        for k, v in search.items():
+            setattr(user, k, v)
+        self._session.commit()
