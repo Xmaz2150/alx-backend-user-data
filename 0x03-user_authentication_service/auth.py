@@ -101,7 +101,7 @@ class Auth:
         except NoResultFound:
             raise ValueError
 
-    def update_password(self, reset_token: str, password, str) -> None:
+    def update_password(self, reset_token: str, password: str) -> None:
         """
         Updates user's password provide they reset token
         """
@@ -111,7 +111,7 @@ class Auth:
             self._db.update_user(
                     user.id,
                     hashed_password=new_hash,
-                    hashed_password=None
+                    reset_token=None
                     )
         except NoResultFound:
             raise ValueError
